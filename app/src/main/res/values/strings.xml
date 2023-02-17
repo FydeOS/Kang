@@ -2,6 +2,7 @@
     <string name="app_name">KangTester</string>
     <string name="action_settings">Settings</string>
     <string name="audio_check_fragment">Audio Check</string>
+    <string name="touch_check_fragment">Touch Check</string>
     <string name="play_sample_audio">Play Sample Audio</string>
     <string name="stop_sample_audio">Stop Audio</string>
     <string name="audio_not_playing">Not Playing</string>
@@ -24,4 +25,7 @@
     <string name="adjust_accessibility">Accessibility</string>
     <string name="current_volume">Current Volume for %s: %d (%d-%d) Mute: %b</string>
     <string name="current_volume_select">Select a stream type from list</string>
+    <string name="num_touches">Touches detected: %d</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

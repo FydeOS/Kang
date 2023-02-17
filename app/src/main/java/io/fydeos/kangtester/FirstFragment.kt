@@ -35,6 +35,9 @@ class FirstFragment : Fragment() {
         binding.btnGoAudioCheck.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_audioCheck)
         }
+        binding.btnGoTouchCheck.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_multiTouchFragment)
+        }
     }
 
     override fun onDestroyView() {
