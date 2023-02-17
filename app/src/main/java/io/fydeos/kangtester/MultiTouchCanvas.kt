@@ -6,14 +6,20 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Point
 import android.util.AttributeSet
+import android.util.Log
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
+import androidx.core.view.GestureDetectorCompat
 
 class MultiTouchCanvas @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     View(context, attrs, defStyle) {
 
     interface MultiTouchStatusListener {
         fun onStatus(pointerLocations: List<Point>, numPoints: Int)
+        fun onScroll(p0: MotionEvent?, p1: MotionEvent?, p2: Float, p3: Float)
+        fun onFling(p0: MotionEvent?, p1: MotionEvent?, p2: Float, p3: Float)
     }
 
     var statusListener: MultiTouchStatusListener? = null
@@ -23,6 +29,7 @@ class MultiTouchCanvas @JvmOverloads constructor(context: Context, attrs: Attrib
     private val pointerLocations = mutableListOf<Point>()
     private val pointerColors = intArrayOf(-0x1, -0xbfc0, -0xbf00c0, -0xbfbf01, -0xbf01, -0xc0, -0xbf0001)
     private val pointerColorsDark = intArrayOf(-0x5f5f60, -0x600000, -0xff6000, -0xffff60, -0x5fff60, -0x5f6000, -0xff5f60)
+    private var det: GestureDetectorCompat
 
     init {
         circleRadius = (CIRCLE_RADIUS_DP * resources.displayMetrics.density).toInt()
@@ -34,6 +41,44 @@ class MultiTouchCanvas @JvmOverloads constructor(context: Context, attrs: Attrib
         for (i in 0 until maxPointers) {
             pointerLocations.add(Point())
         }
+
+        det = GestureDetectorCompat(context, object : GestureDetector.OnGestureListener {
+            override fun onDown(p0: MotionEvent?): Boolean {
+                return true
+            }
+
+            override fun onShowPress(p0: MotionEvent?) {
+            }
+
+            override fun onSingleTapUp(p0: MotionEvent?): Boolean {
+                return true
+            }
+
+            override fun onScroll(
+                p0: MotionEvent?,
+                p1: MotionEvent?,
+                p2: Float,
+                p3: Float
+            ): Boolean {
+                statusListener?.onScroll(p0, p1, p2, p3)
+                return true
+            }
+
+            override fun onLongPress(p0: MotionEvent?) {
+                Toast.makeText(context, "Long Press", Toast.LENGTH_SHORT).show();
+            }
+
+            override fun onFling(
+                p0: MotionEvent?,
+                p1: MotionEvent?,
+                p2: Float,
+                p3: Float
+            ): Boolean {
+                statusListener?.onFling(p0, p1, p2, p3)
+                return true
+            }
+
+        })
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -52,6 +97,7 @@ class MultiTouchCanvas @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        det.onTouchEvent(event)
         val pointerIndex = event.actionIndex
         val action = event.actionMasked
         val numTouches = event.pointerCount

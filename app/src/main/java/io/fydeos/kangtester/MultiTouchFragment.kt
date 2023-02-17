@@ -4,15 +4,15 @@ import android.graphics.Point
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import io.fydeos.kangtester.databinding.FragmentAudioCheckBinding
 import io.fydeos.kangtester.databinding.FragmentMultiTouchBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -21,17 +21,14 @@ private const val ARG_PARAM2 = "param2"
  */
 class MultiTouchFragment : Fragment() {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private lateinit var _binding: FragmentMultiTouchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
+
+    private var _scrollX = 0.0
+    private var _scrollY = 0.0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,24 +36,42 @@ class MultiTouchFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentMultiTouchBinding.inflate(inflater, container, false)
+
         return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding.multiTouchView.statusListener = object: MultiTouchCanvas.MultiTouchStatusListener{
-            override fun onStatus(pointerLocations: List<Point>, numPoints: Int) {
-                val str = StringBuilder(String.format(getString(R.string.num_touches), numPoints))
-                for (i in 0 until numPoints) {
-                    str.append("\n")
-                    str.append(pointerLocations[i].x)
-                    str.append(", ")
-                    str.append(pointerLocations[i].y)
+        _binding.multiTouchView.statusListener =
+            object : MultiTouchCanvas.MultiTouchStatusListener {
+                override fun onStatus(pointerLocations: List<Point>, numPoints: Int) {
+                    val str =
+                        StringBuilder(String.format(getString(R.string.num_touches), numPoints))
+                    for (i in 0 until numPoints) {
+                        str.append("\n")
+                        str.append(pointerLocations[i].x)
+                        str.append(", ")
+                        str.append(pointerLocations[i].y)
+                    }
+                    _binding.textView.text = str
                 }
-                _binding.textView.text = str
+
+                override fun onFling(p0: MotionEvent?, p1: MotionEvent?, p2: Float, p3: Float) {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.fling_det).format(p2, p3),
+                        Toast.LENGTH_SHORT
+                    ).show();
+                }
+
+                override fun onScroll(p0: MotionEvent?, p1: MotionEvent?, p2: Float, p3: Float) {
+                    _scrollX += p2
+                    _scrollY += p3
+                    _binding.textView2.text =
+                        getString(R.string.scroll_pos).format(_scrollX, _scrollY)
+                }
             }
-        }
     }
 
     companion object {
@@ -72,10 +87,6 @@ class MultiTouchFragment : Fragment() {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             MultiTouchFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
             }
     }
 }

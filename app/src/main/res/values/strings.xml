@@ -26,6 +26,8 @@
     <string name="current_volume">Current Volume for %s: %d (%d-%d) Mute: %b</string>
     <string name="current_volume_select">Select a stream type from list</string>
     <string name="num_touches">Touches detected: %d</string>
+    <string name="scroll_pos">Scroll position: X=%f, Y=%f</string>
+    <string name="fling_det">Detected fling: X=%f, Y=%f</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
