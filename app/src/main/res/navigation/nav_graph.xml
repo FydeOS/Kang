@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_multiTouchFragment"
             app:destination="@id/multiTouchFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_cameraCheckFragment"
+            app:destination="@id/cameraCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioCheck"
@@ -29,4 +32,9 @@
         android:name="io.fydeos.kangtester.MultiTouchFragment"
         android:label="fragment_multi_touch"
         tools:layout="@layout/fragment_multi_touch" />
+    <fragment
+        android:id="@+id/cameraCheckFragment"
+        android:name="io.fydeos.kangtester.CameraCheckFragment"
+        android:label="fragment_camera_check"
+        tools:layout="@layout/fragment_camera_check" />
 </navigation>

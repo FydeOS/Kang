@@ -43,10 +43,10 @@
                 android:layout_height="match_parent">
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btn_camera_check"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Button" />
+                    android:text="@string/camera_check" />
             </TableRow>
 
             <TableRow

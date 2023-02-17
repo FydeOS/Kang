@@ -38,6 +38,9 @@ class FirstFragment : Fragment() {
         binding.btnGoTouchCheck.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_multiTouchFragment)
         }
+        binding.btnCameraCheck.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_cameraCheckFragment)
+        }
     }
 
     override fun onDestroyView() {
