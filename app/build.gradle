@@ -5,13 +5,13 @@ plugins {
 
 android {
     namespace 'io.fydeos.kangtester'
-    compileSdk 31
+    compileSdk 33
 
     defaultConfig {
         applicationId "io.fydeos.kangtester"
         minSdk 28
         //noinspection ExpiredTargetSdkVersion
-        targetSdk 31
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 

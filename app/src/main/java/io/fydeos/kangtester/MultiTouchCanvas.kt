@@ -43,20 +43,20 @@ class MultiTouchCanvas @JvmOverloads constructor(context: Context, attrs: Attrib
         }
 
         det = GestureDetectorCompat(context, object : GestureDetector.OnGestureListener {
-            override fun onDown(p0: MotionEvent?): Boolean {
+            override fun onDown(p0: MotionEvent): Boolean {
                 return true
             }
 
-            override fun onShowPress(p0: MotionEvent?) {
+            override fun onShowPress(p0: MotionEvent) {
             }
 
-            override fun onSingleTapUp(p0: MotionEvent?): Boolean {
+            override fun onSingleTapUp(p0: MotionEvent): Boolean {
                 return true
             }
 
             override fun onScroll(
-                p0: MotionEvent?,
-                p1: MotionEvent?,
+                p0: MotionEvent,
+                p1: MotionEvent,
                 p2: Float,
                 p3: Float
             ): Boolean {
@@ -64,19 +64,20 @@ class MultiTouchCanvas @JvmOverloads constructor(context: Context, attrs: Attrib
                 return true
             }
 
-            override fun onLongPress(p0: MotionEvent?) {
+            override fun onLongPress(p0: MotionEvent) {
                 Toast.makeText(context, "Long Press", Toast.LENGTH_SHORT).show();
             }
 
             override fun onFling(
-                p0: MotionEvent?,
-                p1: MotionEvent?,
+                p0: MotionEvent,
+                p1: MotionEvent,
                 p2: Float,
                 p3: Float
             ): Boolean {
                 statusListener?.onFling(p0, p1, p2, p3)
                 return true
             }
+
 
         })
     }
