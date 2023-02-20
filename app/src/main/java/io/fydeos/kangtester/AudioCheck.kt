@@ -221,28 +221,30 @@ class AudioCheck : Fragment() {
     private lateinit var _audioManager: AudioManager
     private var _volType = -1
     private fun volumeRadioChanged() {
-        val text = view!!.findViewById<RadioButton>(binding.rgVolumeType.checkedRadioButtonId).text
-        if (binding.rbVolumeAccessibility.isChecked) {
-            _volType = AudioManager.STREAM_ACCESSIBILITY
-        } else if (binding.rbVolumeAlarm.isChecked) {
-            _volType = AudioManager.STREAM_ALARM
-        } else if (binding.rbVolumeMusic.isChecked) {
-            _volType = AudioManager.STREAM_MUSIC
-        } else if (binding.rbVolumeRing.isChecked) {
-            _volType = AudioManager.STREAM_RING
-        } else if (binding.rbVolumeVoiceCall.isChecked) {
-            _volType = AudioManager.STREAM_VOICE_CALL
-        } else if (binding.rbVolumeSystem.isChecked) {
-            _volType = AudioManager.STREAM_SYSTEM
-        } else {
-            return
+        val checkedButton = view!!.findViewById<RadioButton>(binding.rgVolumeType.checkedRadioButtonId)
+        if (checkedButton != null) {
+            if (binding.rbVolumeAccessibility.isChecked) {
+                _volType = AudioManager.STREAM_ACCESSIBILITY
+            } else if (binding.rbVolumeAlarm.isChecked) {
+                _volType = AudioManager.STREAM_ALARM
+            } else if (binding.rbVolumeMusic.isChecked) {
+                _volType = AudioManager.STREAM_MUSIC
+            } else if (binding.rbVolumeRing.isChecked) {
+                _volType = AudioManager.STREAM_RING
+            } else if (binding.rbVolumeVoiceCall.isChecked) {
+                _volType = AudioManager.STREAM_VOICE_CALL
+            } else if (binding.rbVolumeSystem.isChecked) {
+                _volType = AudioManager.STREAM_SYSTEM
+            } else {
+                return
+            }
+            val vol = _audioManager.getStreamVolume(_volType)
+            val min = _audioManager.getStreamMinVolume(_volType)
+            val max = _audioManager.getStreamMaxVolume(_volType)
+            val mute = _audioManager.isStreamMute(_volType)
+            binding.tvCurrentVolume.text =
+                getText(R.string.current_volume).toString().format(checkedButton.text, vol, min, max, mute)
         }
-        val vol = _audioManager.getStreamVolume(_volType)
-        val min = _audioManager.getStreamMinVolume(_volType)
-        val max = _audioManager.getStreamMaxVolume(_volType)
-        val mute = _audioManager.isStreamMute(_volType)
-        binding.tvCurrentVolume.text =
-            getText(R.string.current_volume).toString().format(text, vol, min, max, mute)
     }
 
     private fun volumeAction(t: Int) {
