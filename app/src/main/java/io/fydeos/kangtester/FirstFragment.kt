@@ -41,6 +41,9 @@ class FirstFragment : Fragment() {
         binding.btnCameraCheck.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_cameraCheckFragment)
         }
+        binding.btnSensorCheck.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_sensorCheckFragment)
+        }
     }
 
     override fun onDestroyView() {

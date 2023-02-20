@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_cameraCheckFragment"
             app:destination="@id/cameraCheckFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_sensorCheckFragment"
+            app:destination="@id/sensorCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioCheck"
@@ -37,4 +40,9 @@
         android:name="io.fydeos.kangtester.CameraCheckFragment"
         android:label="fragment_camera_check"
         tools:layout="@layout/fragment_camera_check" />
+    <fragment
+        android:id="@+id/sensorCheckFragment"
+        android:name="io.fydeos.kangtester.SensorCheckFragment"
+        android:label="fragment_sensor_check"
+        tools:layout="@layout/fragment_sensor_check" />
 </navigation>
