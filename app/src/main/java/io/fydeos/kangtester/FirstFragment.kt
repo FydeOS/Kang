@@ -1,12 +1,14 @@
 package io.fydeos.kangtester
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import io.fydeos.kangtester.databinding.FragmentFirstBinding
+
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -44,7 +46,26 @@ class FirstFragment : Fragment() {
         binding.btnSensorCheck.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_sensorCheckFragment)
         }
+        binding.btnNotificationCheck.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_notificationCheckFragment)
+        }
     }
+
+    /*
+    protected fun onNewIntent(intent: Intent) {
+        val extras = intent.extras
+        if (extras != null) {
+            if (extras.containsKey("menuFragment")) {
+                val fragmentTransaction: FragmentTransaction =
+                    getSupportFragmentManager().beginTransaction()
+                fragmentTransaction.replace(
+                    R.id.detail_fragment_container,
+                    MyFragment.newInstance()
+                ).commit()
+            }
+        }
+    }
+    */
 
     override fun onDestroyView() {
         super.onDestroyView()

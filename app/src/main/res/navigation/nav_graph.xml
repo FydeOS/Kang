@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_sensorCheckFragment"
             app:destination="@id/sensorCheckFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_notificationCheckFragment"
+            app:destination="@id/notificationCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioCheck"
@@ -45,4 +48,9 @@
         android:name="io.fydeos.kangtester.SensorCheckFragment"
         android:label="fragment_sensor_check"
         tools:layout="@layout/fragment_sensor_check" />
+    <fragment
+        android:id="@+id/notificationCheckFragment"
+        android:name="io.fydeos.kangtester.NotificationCheckFragment"
+        android:label="fragment_notification_check"
+        tools:layout="@layout/fragment_notification_check" />
 </navigation>

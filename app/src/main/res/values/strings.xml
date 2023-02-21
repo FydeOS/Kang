@@ -47,4 +47,22 @@
     <string name="waiting_for_data">Waiting for data</string>
     <string name="sensor_not_exist">Sensor does not exist</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="notification_title">Checkout FydeTab Duo</string>
+    <string name="notification_description">The long-awaited FydeTab Duo is available!\nClick to view details.</string>
+    <string name="notification_no_permission">No notification permission</string>
+    <string name="post_basic_notification">Basic Notification</string>
+    <string name="notification_check">Notification Check</string>
+    <string name="post_notification_with_action">With Action Buttons</string>
+    <string name="notification_click_link">https://fydetabduo.com/</string>
+    <string name="notification_type_prompt">Tell us the reason</string>
+    <string name="notification_action_1">Comment</string>
+    <string name="notification_comment_received">Your comment \"%s\" is received.</string>
+    <string name="notification_action_2">Dismiss</string>
+    <string name="post_notification_with_progress_bar">With Progress Bar</string>
+    <string name="del_notification">Delete Last Notification</string>
+    <string name="notification_title_2">Your brain is being upgraded…</string>
+    <string name="notification_title_3">Your brain is now up-to-date!</string>
+    <string name="notification_content_3">Click to dismiss this notification</string>
+    <string name="progress_bar_indeterminate">Indeterminate</string>
+    <string name="post_notification_with_image">With Image</string>
 </resources>
