@@ -1,5 +1,6 @@
 package io.fydeos.kangtester
 
+import android.Manifest
 import android.app.Notification
 import android.app.Notification.EXTRA_NOTIFICATION_ID
 import android.app.Notification.FLAG_ONGOING_EVENT
@@ -7,6 +8,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
@@ -18,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.RemoteInput
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import io.fydeos.kangtester.databinding.FragmentNotificationCheckBinding
@@ -70,7 +73,16 @@ class NotificationCheckFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT >= 33) {
-            requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            if (ContextCompat.checkSelfPermission(
+                    context!!,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                gotPermission = true
+                notificationPermission()
+            } else {
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            }
         } else {
             gotPermission = true
             notificationPermission()

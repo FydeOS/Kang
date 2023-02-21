@@ -1,6 +1,7 @@
 package io.fydeos.kangtester
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -27,7 +28,7 @@ import io.fydeos.kangtester.databinding.FragmentMultiTouchBinding
 class CameraCheckFragment : Fragment() {
     // TODO: Rename and change types of parameters
 
-    private lateinit var _binding:  FragmentCameraCheckBinding
+    private lateinit var _binding: FragmentCameraCheckBinding
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -36,13 +37,16 @@ class CameraCheckFragment : Fragment() {
                 startCamera()
             } else {
                 if (context != null)
-                    Toast.makeText(context!!,
+                    Toast.makeText(
+                        context!!,
                         "Permissions not granted by the user.",
-                        Toast.LENGTH_SHORT).show()
+                        Toast.LENGTH_SHORT
+                    ).show()
                 activity!!.supportFragmentManager.popBackStack();
             }
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -57,7 +61,15 @@ class CameraCheckFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        if (ContextCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            startCamera()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -84,9 +96,10 @@ class CameraCheckFragment : Fragment() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview)
+                    this, cameraSelector, preview
+                )
 
-            } catch(exc: Exception) {
+            } catch (exc: Exception) {
                 Log.e("Camera", "Use case binding failed", exc)
             }
 

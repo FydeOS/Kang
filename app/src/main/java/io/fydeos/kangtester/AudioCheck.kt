@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
@@ -15,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import io.fydeos.kangtester.databinding.FragmentAudioCheckBinding
@@ -125,7 +127,16 @@ class AudioCheck : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         updatePlayStatus()
         _audioManager = getSystemService(context!!, AudioManager::class.java)!!
-        requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        if (ContextCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.RECORD_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionToRecordAccepted = true
+            updatePlayStatus()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
         val handler = getView()!!.handler
         binding.btnPlaySampleAudio.setOnClickListener {
             stopPlaying()
