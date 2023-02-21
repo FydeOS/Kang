@@ -66,4 +66,15 @@
     <string name="progress_bar_indeterminate">Indeterminate</string>
     <string name="post_notification_with_image">With Image</string>
     <string name="app_version">App version %s, built at %s</string>
+    <string name="scan_wifi">Scan Wi-Fi</string>
+    <string name="get_wifi_scan_result">Get Scan Result</string>
+    <string name="scan_result_time">Last result reported: %s (%s)</string>
+    <string name="scan_result_never">never</string>
+    <string name="scan_result_manual">manually retrieved</string>
+    <string name="scan_result_auto">automatically reported</string>
+    <string name="scan_result_empty">Scan result is empty</string>
+    <string name="scan_started">Scan is started</string>
+    <string name="scan_not_started">Scan is not started</string>
+    <string name="scan_failed">Scan failed</string>
+    <string name="wifi_check">Wi-Fi Check</string>
 </resources>

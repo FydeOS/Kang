@@ -49,6 +49,9 @@ class FirstFragment : Fragment() {
         binding.btnNotificationCheck.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_notificationCheckFragment)
         }
+        binding.btnGoWifiCheck.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_wiFiScanCheckFragment)
+        }
     }
 
     /*

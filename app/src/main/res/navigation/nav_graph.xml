@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_notificationCheckFragment"
             app:destination="@id/notificationCheckFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_wiFiScanCheckFragment"
+            app:destination="@id/wiFiScanCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioCheck"
@@ -53,4 +56,9 @@
         android:name="io.fydeos.kangtester.NotificationCheckFragment"
         android:label="fragment_notification_check"
         tools:layout="@layout/fragment_notification_check" />
+    <fragment
+        android:id="@+id/wiFiScanCheckFragment"
+        android:name="io.fydeos.kangtester.WiFiScanCheckFragment"
+        android:label="fragment_wi_fi_scan_check"
+        tools:layout="@layout/fragment_wi_fi_scan_check" />
 </navigation>
