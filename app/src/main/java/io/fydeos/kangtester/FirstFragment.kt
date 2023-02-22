@@ -52,6 +52,9 @@ class FirstFragment : Fragment() {
         binding.btnGoWifiCheck.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_wiFiScanCheckFragment)
         }
+        binding.btnGoVideoCheck.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_videoCheckFragment)
+        }
     }
 
     /*

@@ -77,4 +77,19 @@
     <string name="scan_not_started">Scan is not started</string>
     <string name="scan_failed">Scan failed</string>
     <string name="wifi_check">Wi-Fi Check</string>
+    <string name="hw_decode">HW Decode</string>
+    <string name="video_check">Video Check</string>
+    <string name="sw_decode">SW Decode</string>
+    <string name="codec_h264">H264</string>
+    <string name="codec_h265">H265</string>
+    <string name="video_local">Local Video</string>
+    <string name="video_stream">Online Stream</string>
+    <string name="video_fullscreen">Fullscreen</string>
+    <string name="video_loading">Loading</string>
+    <string name="video_playing">Playing</string>
+    <string name="video_error">Video Error: %s\nMessage: %s\nCaused by: %s</string>
+    <string name="codec_error">%s Codec Error: %s</string>
+    <string name="video">Video</string>
+    <string name="audio">Audio</string>
+    <string name="codec_name">%s Codec: %s</string>
 </resources>

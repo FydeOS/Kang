@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_wiFiScanCheckFragment"
             app:destination="@id/wiFiScanCheckFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_videoCheckFragment"
+            app:destination="@id/videoCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioCheck"
@@ -61,4 +64,9 @@
         android:name="io.fydeos.kangtester.WiFiScanCheckFragment"
         android:label="fragment_wi_fi_scan_check"
         tools:layout="@layout/fragment_wi_fi_scan_check" />
+    <fragment
+        android:id="@+id/videoCheckFragment"
+        android:name="io.fydeos.kangtester.VideoCheckFragment"
+        android:label="fragment_video_check"
+        tools:layout="@layout/fragment_video_check" />
 </navigation>
