@@ -32,18 +32,16 @@ class CameraCheckFragment : Fragment() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        run {
-            if (isGranted) {
-                startCamera()
-            } else {
-                if (context != null)
-                    Toast.makeText(
-                        requireContext(),
-                        "Permissions not granted by the user.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                requireActivity().supportFragmentManager.popBackStack();
-            }
+        if (isGranted) {
+            startCamera()
+        } else {
+            if (context != null)
+                Toast.makeText(
+                    requireContext(),
+                    "Permissions not granted by the user.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            requireActivity().supportFragmentManager.popBackStack();
         }
     }
 
@@ -57,10 +55,24 @@ class CameraCheckFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentCameraCheckBinding.inflate(inflater, container, false)
+        _binding.btnCameraChangeSide.setOnClickListener {
+            if (cameraChoice == 1) {
+                cameraChoice = 2
+            } else {
+                cameraChoice = 1
+            }
+
+            startCamera()
+        }
         return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onStart() {
+        super.onStart()
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.CAMERA
@@ -70,11 +82,12 @@ class CameraCheckFragment : Fragment() {
         } else {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
-        super.onViewCreated(view, savedInstanceState)
     }
 
+    private var cameraChoice = 0
+
     private fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(context!!)
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner
@@ -88,7 +101,24 @@ class CameraCheckFragment : Fragment() {
                 }
 
             // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val hasFrontCamera = cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
+            val hasBackCamera = cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)
+            _binding.btnCameraChangeSide.visibility = if (hasFrontCamera && hasBackCamera) View.VISIBLE else View.INVISIBLE
+            if (cameraChoice == 0 && hasFrontCamera) {
+                cameraChoice = 1
+            }
+            if (cameraChoice == 0 && hasBackCamera) {
+                cameraChoice = 2
+            }
+            val camera =
+                when (cameraChoice) {
+                    1 -> CameraSelector.DEFAULT_FRONT_CAMERA
+                    2 -> CameraSelector.DEFAULT_BACK_CAMERA
+                    else -> {
+                        _binding.tvMessage.text = getString(R.string.camera_missing)
+                        return@addListener
+                    }
+                }
 
             try {
                 // Unbind use cases before rebinding
@@ -96,7 +126,7 @@ class CameraCheckFragment : Fragment() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview
+                    this, camera, preview
                 )
 
             } catch (exc: Exception) {
