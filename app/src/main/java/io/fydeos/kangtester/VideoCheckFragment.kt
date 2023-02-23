@@ -1,12 +1,17 @@
 package io.fydeos.kangtester
 
+import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatDialog
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.*
 import androidx.media3.datasource.RawResourceDataSource
@@ -20,7 +25,6 @@ import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import io.fydeos.kangtester.databinding.FragmentVideoCheckBinding
-import java.lang.Exception
 
 /**
  * A simple [Fragment] subclass.
@@ -44,14 +48,42 @@ class VideoCheckFragment : Fragment() {
         return binding.root
     }
 
+    private lateinit var d: AppCompatDialog
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        d = object : AppCompatDialog(context!!, android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
+            override fun onStart() {
+                super.onStart()
+                val windowInsetsController =
+                    WindowCompat.getInsetsController(this.window!!, this.window!!.decorView)
+                windowInsetsController.systemBarsBehavior =
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+                binding.lContainer.removeView(binding.videoView)
+                addContentView(binding.videoView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+            }
+
+            override fun onStop() {
+                super.onStop()
+                val windowInsetsController =
+                    WindowCompat.getInsetsController(this.window!!, this.window!!.decorView)
+                windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+                (binding.videoView.parent as ViewGroup).removeView(binding.videoView)
+                binding.lContainer.addView(binding.videoView)
+            }
+        }
+        d.onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                d.dismiss()
+            }
+        })
         binding.rgDecoder.setOnCheckedChangeListener { group, checkedId -> initializePlayer() }
         binding.rgEncoding.setOnCheckedChangeListener { group, checkedId -> initializePlayer() }
         binding.rgVideoSource.setOnCheckedChangeListener { group, checkedId -> initializePlayer() }
         binding.btnFullscreen.setOnClickListener {
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            binding.videoView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+            d.show()
         }
     }
 
@@ -60,7 +92,8 @@ class VideoCheckFragment : Fragment() {
     }
 
     private var player: ExoPlayer? = null
-    private fun initializePlayer() {
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    private fun  initializePlayer() {
         if (player != null) {
             releasePlayer()
         }
