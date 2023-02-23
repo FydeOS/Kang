@@ -30,7 +30,7 @@ class SensorCheckFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSensorCheckBinding.inflate(inflater, container, false)
         return _binding.root
     }
@@ -53,10 +53,10 @@ class SensorCheckFragment : Fragment() {
     private lateinit var vibrator: Vibrator
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sensorManager = getSystemService(context!!, SensorManager::class.java)!!
+        sensorManager = getSystemService(requireContext(), SensorManager::class.java)!!
         for (s in sensorTypes) {
             val sensor = sensorManager.getDefaultSensor(s.type)
-            val textView1 = TextView(context!!)
+            val textView1 = TextView(requireContext())
             textView1.layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -101,7 +101,7 @@ class SensorCheckFragment : Fragment() {
             }
 
         }
-        vibrator = getSystemService(context!!, Vibrator::class.java)!!
+        vibrator = getSystemService(requireContext(), Vibrator::class.java)!!
         _binding.btnVibrate.setOnClickListener {
             vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
         }

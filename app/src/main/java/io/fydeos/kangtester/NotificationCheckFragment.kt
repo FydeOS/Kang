@@ -74,7 +74,7 @@ class NotificationCheckFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (Build.VERSION.SDK_INT >= 33) {
             if (ContextCompat.checkSelfPermission(
-                    context!!,
+                    requireContext(),
                     Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
@@ -95,7 +95,7 @@ class NotificationCheckFragment : Fragment() {
                 _progressTimer?.cancel()
                 _progressTimer = null
             }
-            NotificationManagerCompat.from(context!!).cancel(notificationId)
+            NotificationManagerCompat.from(requireContext()).cancel(notificationId)
         }
         _binding.btnNotificationWithProgress.setOnClickListener { postNotificationWithProgressBar() }
         _binding.btnPostNotificationWithImage.setOnClickListener { postNotificationWithImage() }
@@ -109,7 +109,7 @@ class NotificationCheckFragment : Fragment() {
         mChannel.description = descriptionText
         // Register the channel with the system; you can't change the importance
         // or other notification behaviors after this
-        val notificationManager = getSystemService(context!!, NotificationManager::class.java)!!
+        val notificationManager = getSystemService(requireContext(), NotificationManager::class.java)!!
         notificationManager.createNotificationChannel(mChannel)
     }
 
@@ -119,7 +119,7 @@ class NotificationCheckFragment : Fragment() {
         val openUrlIntent =
             Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.notification_click_link)))
         val contentIntent = PendingIntent.getActivity(
-            context!!,
+            requireContext(),
             0,
             openUrlIntent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
@@ -132,7 +132,7 @@ class NotificationCheckFragment : Fragment() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(contentIntent)
             .setAutoCancel(true)
-        with(NotificationManagerCompat.from(context!!)) {
+        with(NotificationManagerCompat.from(requireContext())) {
             notificationId = (Math.random() * 10000).toInt()
             notify(notificationId, builder.build())
         }
@@ -142,15 +142,15 @@ class NotificationCheckFragment : Fragment() {
         val openUrlIntent =
             Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.notification_click_link)))
         val contentIntent = PendingIntent.getActivity(
-            context!!,
+            requireContext(),
             0,
             openUrlIntent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
-        val bitmap = BitmapFactory.decodeResource(context!!.resources,
+        val bitmap = BitmapFactory.decodeResource(requireContext().resources,
             R.drawable.fydetab)
 
-        val builder = NotificationCompat.Builder(context!!, CHANNEL_ID)
+        val builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
             .setSmallIcon(R.drawable.tablet_icon)
             .setContentTitle(getString(R.string.notification_title))
             .setContentText(getString(R.string.notification_description))
@@ -161,7 +161,7 @@ class NotificationCheckFragment : Fragment() {
                 .bigPicture(bitmap)
                 .bigLargeIcon(null))
             .setAutoCancel(true)
-        with(NotificationManagerCompat.from(context!!)) {
+        with(NotificationManagerCompat.from(requireContext())) {
             notificationId = (Math.random() * 10000).toInt()
             notify(notificationId, builder.build())
         }
@@ -171,7 +171,7 @@ class NotificationCheckFragment : Fragment() {
     private fun postNotificationWithAction() {
         notificationId = (Math.random() * 10000).toInt()
         val replyIntent =
-            Intent(context!!.applicationContext, NotificationClickedReceiver::class.java).apply {
+            Intent(requireContext().applicationContext, NotificationClickedReceiver::class.java).apply {
                 action = BROADCAST_NAME
                 putExtra(EXTRA_NOTIFICATION_ID, notificationId)
                 putExtra(EXTRA_N_ACTION, KEY_ACTION_COMMENT)
@@ -187,7 +187,7 @@ class NotificationCheckFragment : Fragment() {
         }
         val replyPendingIntent: PendingIntent =
             PendingIntent.getBroadcast(
-                activity!!.applicationContext,
+                requireActivity().applicationContext,
                 notificationId,
                 replyIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT or m
@@ -199,7 +199,7 @@ class NotificationCheckFragment : Fragment() {
         ).addRemoteInput(remoteInput).build()
 
         val dismissIntent =
-            Intent(context!!.applicationContext, NotificationClickedReceiver::class.java).apply {
+            Intent(requireContext().applicationContext, NotificationClickedReceiver::class.java).apply {
                 action = BROADCAST_NAME
                 putExtra(EXTRA_NOTIFICATION_ID, notificationId)
                 putExtra(EXTRA_N_ACTION, KEY_ACTION_DISMISS)
@@ -207,7 +207,7 @@ class NotificationCheckFragment : Fragment() {
 
         val dismissPendingIntent: PendingIntent =
             PendingIntent.getBroadcast(
-                activity!!.applicationContext,
+                requireActivity().applicationContext,
                 notificationId + 1,
                 dismissIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT or m
@@ -217,7 +217,7 @@ class NotificationCheckFragment : Fragment() {
             dismissPendingIntent
         ).build()
 
-        val builder = NotificationCompat.Builder(context!!, CHANNEL_ID).run {
+        val builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID).run {
             setSmallIcon(R.drawable.tablet_icon)
             setContentTitle(getString(R.string.notification_title))
             setContentText(getString(R.string.notification_description))
@@ -225,7 +225,7 @@ class NotificationCheckFragment : Fragment() {
             addAction(actionComment)
             addAction(actionDismiss)
         }
-        with(NotificationManagerCompat.from(context!!)) {
+        with(NotificationManagerCompat.from(requireContext())) {
             notify(notificationId, builder.build())
         }
     }
@@ -235,21 +235,21 @@ class NotificationCheckFragment : Fragment() {
     private fun postNotificationWithProgressBar() {
         notificationId = (Math.random() * 10000).toInt()
         val contentIntent = PendingIntent.getActivity(
-            context!!,
+            requireContext(),
             0,
             Intent(),
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
         _progerssNotificationId = notificationId
-        val builder = NotificationCompat.Builder(context!!, CHANNEL_ID).apply {
+        val builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID).apply {
             setContentTitle(getString(R.string.notification_title_2))
             setSmallIcon(R.drawable.baseline_psychology_24)
             setOnlyAlertOnce(true)
         }
         val PROGRESS_MAX = 100
         var PROGRESS_CURRENT = 0
-        val handler = view!!.handler
-        NotificationManagerCompat.from(context!!).apply {
+        val handler = requireView().handler
+        NotificationManagerCompat.from(requireContext()).apply {
             // Issue the initial notification with zero progress
             builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, _binding.cbProgressIndeterminate.isChecked)
             notify(_progerssNotificationId, builder.build())

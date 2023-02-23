@@ -37,11 +37,11 @@ class WiFiScanCheckFragment : Fragment() {
             } else {
                 if (context != null)
                     Toast.makeText(
-                        context!!,
+                        requireContext(),
                         "Permissions not granted by the user.",
                         Toast.LENGTH_SHORT
                     ).show()
-                activity!!.supportFragmentManager.popBackStack();
+                requireActivity().supportFragmentManager.popBackStack();
             }
         }
     }
@@ -64,7 +64,7 @@ class WiFiScanCheckFragment : Fragment() {
 
     private fun check(perm: String): Boolean {
         return ContextCompat.checkSelfPermission(
-            context!!, perm
+            requireContext(), perm
         ) == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -109,11 +109,11 @@ class WiFiScanCheckFragment : Fragment() {
                 )
             )
         }
-        wifi = context!!.getSystemService(WifiManager::class.java)
+        wifi = requireContext().getSystemService(WifiManager::class.java)
         binding.btnScanWifi.setOnClickListener {
             val succeeded = wifi.startScan()
             Toast.makeText(
-                context!!, if (succeeded) {
+                requireContext(), if (succeeded) {
                     R.string.scan_started
                 } else {
                     R.string.scan_not_started
@@ -139,11 +139,11 @@ class WiFiScanCheckFragment : Fragment() {
 
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
-        context!!.registerReceiver(wifiScanReceiver, intentFilter)
+        requireContext().registerReceiver(wifiScanReceiver, intentFilter)
     }
 
     override fun onStop() {
         super.onStop()
-        context!!.unregisterReceiver(wifiScanReceiver)
+        requireContext().unregisterReceiver(wifiScanReceiver)
     }
 }

@@ -38,11 +38,11 @@ class CameraCheckFragment : Fragment() {
             } else {
                 if (context != null)
                     Toast.makeText(
-                        context!!,
+                        requireContext(),
                         "Permissions not granted by the user.",
                         Toast.LENGTH_SHORT
                     ).show()
-                activity!!.supportFragmentManager.popBackStack();
+                requireActivity().supportFragmentManager.popBackStack();
             }
         }
     }
@@ -54,7 +54,7 @@ class CameraCheckFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentCameraCheckBinding.inflate(inflater, container, false)
         return _binding.root
@@ -62,7 +62,7 @@ class CameraCheckFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (ContextCompat.checkSelfPermission(
-                context!!,
+                requireContext(),
                 Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -103,7 +103,7 @@ class CameraCheckFragment : Fragment() {
                 Log.e("Camera", "Use case binding failed", exc)
             }
 
-        }, ContextCompat.getMainExecutor(context!!))
+        }, ContextCompat.getMainExecutor(requireContext()))
     }
 
 

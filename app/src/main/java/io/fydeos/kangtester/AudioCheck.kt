@@ -59,7 +59,7 @@ class AudioCheck : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _player = MediaPlayer.create(context, R.raw.sample_audio)
         _recorder = MediaRecorder()
         _binding = FragmentAudioCheckBinding.inflate(inflater, container, false)
@@ -126,9 +126,9 @@ class AudioCheck : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         updatePlayStatus()
-        _audioManager = getSystemService(context!!, AudioManager::class.java)!!
+        _audioManager = getSystemService(requireContext(), AudioManager::class.java)!!
         if (ContextCompat.checkSelfPermission(
-                context!!,
+                requireContext(),
                 Manifest.permission.RECORD_AUDIO
             ) == PackageManager.PERMISSION_GRANTED
         ) {
@@ -137,11 +137,11 @@ class AudioCheck : Fragment() {
         } else {
             requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
-        val handler = getView()!!.handler
+        val handler = requireView().handler
         binding.btnPlaySampleAudio.setOnClickListener {
             stopPlaying()
             _player.reset();
-            val afd = context!!.resources.openRawResourceFd(R.raw.sample_audio)
+            val afd = requireContext().resources.openRawResourceFd(R.raw.sample_audio)
             _player.setDataSource(afd)
             _player.prepare();
             _player.start()
@@ -155,7 +155,7 @@ class AudioCheck : Fragment() {
         binding.btnPlayRecordedAudio.setOnClickListener {
             stopPlaying()
             _player.reset();
-            _player.setDataSource(context!!, Uri.fromFile(_recordFile!!))
+            _player.setDataSource(requireContext(), Uri.fromFile(_recordFile!!))
             _player.prepare();
             _player.start()
             _playerTimer = fixedRateTimer("player", false, 0, 100) {
@@ -176,7 +176,7 @@ class AudioCheck : Fragment() {
             _recorder.setAudioSource(MediaRecorder.AudioSource.MIC)
             _recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_WB)
             _recordFile?.delete()
-            _recordFile = File.createTempFile("prefix", "suffix", context!!.cacheDir)
+            _recordFile = File.createTempFile("prefix", "suffix", requireContext().cacheDir)
             _recorder.setOutputFile(_recordFile)
             _recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB)
             _recorder.prepare()
@@ -214,7 +214,7 @@ class AudioCheck : Fragment() {
                 volumeRadioChanged()
             }
         }
-        context!!.registerReceiver(
+        requireContext().registerReceiver(
             _volumeBroadcast,
             IntentFilter("android.media.VOLUME_CHANGED_ACTION")
         )
@@ -225,14 +225,14 @@ class AudioCheck : Fragment() {
         stopPlaying()
         stopRecording()
         _recordFile?.delete()
-        context!!.unregisterReceiver(_volumeBroadcast)
+        requireContext().unregisterReceiver(_volumeBroadcast)
     }
 
     private lateinit var _volumeBroadcast: BroadcastReceiver
     private lateinit var _audioManager: AudioManager
     private var _volType = -1
     private fun volumeRadioChanged() {
-        val checkedButton = view!!.findViewById<RadioButton>(binding.rgVolumeType.checkedRadioButtonId)
+        val checkedButton = requireView().findViewById<RadioButton>(binding.rgVolumeType.checkedRadioButtonId)
         if (checkedButton != null) {
             if (binding.rbVolumeAccessibility.isChecked) {
                 _volType = AudioManager.STREAM_ACCESSIBILITY

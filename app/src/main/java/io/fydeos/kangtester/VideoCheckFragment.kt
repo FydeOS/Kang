@@ -42,7 +42,7 @@ class VideoCheckFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentVideoCheckBinding.inflate(inflater, container, false)
         return binding.root
@@ -51,7 +51,7 @@ class VideoCheckFragment : Fragment() {
     private lateinit var d: AppCompatDialog
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        d = object : AppCompatDialog(context!!, android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
+        d = object : AppCompatDialog(requireContext(), android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
             override fun onStart() {
                 super.onStart()
                 val windowInsetsController =
@@ -72,7 +72,7 @@ class VideoCheckFragment : Fragment() {
                 binding.lContainer.addView(binding.videoView)
             }
         }
-        d.onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+        d.onBackPressedDispatcher.addCallback(viewLifecycleOwner, object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                 d.dismiss()
@@ -106,7 +106,7 @@ class VideoCheckFragment : Fragment() {
             return
         val softwareOnly = binding.rgDecoder.checkedRadioButtonId == R.id.rb_sw_decode
 
-        val rf = DefaultRenderersFactory(context!!.applicationContext)
+        val rf = DefaultRenderersFactory(requireContext().applicationContext)
         rf.setMediaCodecSelector { mimeType, requiresSecureDecoder, requiresTunnelingDecoder ->
             val x = MediaCodecSelector.DEFAULT.getDecoderInfos(
                 mimeType,
@@ -130,7 +130,7 @@ class VideoCheckFragment : Fragment() {
                 MediaItem.fromUri("https://fydeos-wordpress-uploads.oss-cn-beijing.aliyuncs.com/wp-content/uploads/2023/02/tears_hevc_720p_4000.mp4")
             else -> return
         }
-        val builder = ExoPlayer.Builder(context!!, rf)
+        val builder = ExoPlayer.Builder(requireContext(), rf)
         builder.setAnalyticsCollector(object : AnalyticsCollector {
             override fun onRenderedFirstFrame(output: Any, renderTimeMs: Long) {
             }
