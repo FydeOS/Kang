@@ -76,9 +76,9 @@
     <string name="scan_started">Scan is started</string>
     <string name="scan_not_started">Scan is not started</string>
     <string name="scan_failed">Scan failed</string>
-    <string name="wifi_check">Wi-Fi Check</string>
+    <string name="wifi_check">Wi-Fi Scanner Check</string>
     <string name="hw_decode">HW Decode</string>
-    <string name="video_check">Video Check</string>
+    <string name="video_check">Video Playback Check</string>
     <string name="sw_decode">SW Decode</string>
     <string name="codec_h264">H264</string>
     <string name="codec_h265">H265</string>
