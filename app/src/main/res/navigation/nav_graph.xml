@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_videoCheckFragment"
             app:destination="@id/videoCheckFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_screenCaptureCheckFragment"
+            app:destination="@id/screenCaptureCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioCheck"
@@ -69,4 +72,9 @@
         android:name="io.fydeos.kangtester.VideoCheckFragment"
         android:label="fragment_video_check"
         tools:layout="@layout/fragment_video_check" />
+    <fragment
+        android:id="@+id/screenCaptureCheckFragment"
+        android:name="io.fydeos.kangtester.ScreenCaptureCheckFragment"
+        android:label="fragment_screen_capture_check"
+        tools:layout="@layout/fragment_screen_capture_check" />
 </navigation>

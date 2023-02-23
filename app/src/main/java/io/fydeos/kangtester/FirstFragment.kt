@@ -55,6 +55,9 @@ class FirstFragment : Fragment() {
         binding.btnGoVideoCheck.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_videoCheckFragment)
         }
+        binding.btnGoScreenCapture.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_screenCaptureCheckFragment)
+        }
     }
 
     /*

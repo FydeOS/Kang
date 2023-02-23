@@ -92,4 +92,9 @@
     <string name="video">Video</string>
     <string name="audio">Audio</string>
     <string name="codec_name">%s Codec: %s</string>
+    <string name="start_screen_capture">Start Screen Capture</string>
+    <string name="stop_screen_capture">Stop Screen Capture</string>
+    <string name="user_cancelled_capture">User cancelled screen capture</string>
+    <string name="screen_capture_check">Screen Capture Check</string>
+    <string name="capturing_screen">Capturing screen</string>
 </resources>
