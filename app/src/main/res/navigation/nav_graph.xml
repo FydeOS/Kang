@@ -36,6 +36,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_screenCaptureCheckFragment"
             app:destination="@id/screenCaptureCheckFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_externalStorageCheckFragment"
+            app:destination="@id/externalStorageCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioCheck"
@@ -77,4 +80,9 @@
         android:name="io.fydeos.kangtester.ScreenCaptureCheckFragment"
         android:label="fragment_screen_capture_check"
         tools:layout="@layout/fragment_screen_capture_check" />
+    <fragment
+        android:id="@+id/externalStorageCheckFragment"
+        android:name="io.fydeos.kangtester.ExternalStorageCheckFragment"
+        android:label="fragment_external_storage_check"
+        tools:layout="@layout/fragment_external_storage_check" />
 </navigation>

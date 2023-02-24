@@ -58,6 +58,9 @@ class FirstFragment : Fragment() {
         binding.btnGoScreenCapture.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_screenCaptureCheckFragment)
         }
+        binding.btnGoStorageCheck.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_externalStorageCheckFragment)
+        }
     }
 
     /*

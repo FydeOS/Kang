@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ExternalStorageCheckFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/tv_availability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <Button
+            android:id="@+id/btn_write_app_specific"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/write_app_specific_dir" />
+
+        <Button
+            android:id="@+id/btn_read_app_specific"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/read_app_specific_dir" />
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <Button
+                android:id="@+id/btn_browse_pictures"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/browse_pictures_with_media_store_api" />
+
+            <Button
+                android:id="@+id/btn_save_picture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/save_picture_with_media_store_api" />
+
+            <Button
+            android:id="@+id/btn_doc_open"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/document_open"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_doc_dir_open"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/document_dir_open"
+            android:textSize="12sp" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+            <Button
+                android:id="@+id/btn_req_perm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/reqest_storage_manage_permission"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/btn_write_external_storage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="@string/write_storage_root"
+                android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btn_read_external_storage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/read_storage_root"
+            android:textSize="12sp" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+        </ScrollView>
+
+
+</FrameLayout>
