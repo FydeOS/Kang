@@ -30,7 +30,7 @@
         <receiver
             android:name=".NotificationClickedReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="io.fydeos.kangtester.NOTIFICATION_REPLIED"/>
             </intent-filter>

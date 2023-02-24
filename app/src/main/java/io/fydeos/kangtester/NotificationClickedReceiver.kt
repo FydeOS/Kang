@@ -23,6 +23,8 @@ class NotificationClickedReceiver : BroadcastReceiver() {
                     )
                     .build()
 
+            context.sendBroadcast(Intent(RECV_ACTION).putExtra(NotificationCheckFragment.KEY_TEXT_REPLY, txt))
+
 // Issue the new notification.
             NotificationManagerCompat.from(context).notify(
                 intent.getIntExtra(Notification.EXTRA_NOTIFICATION_ID, 0),
@@ -33,4 +35,9 @@ class NotificationClickedReceiver : BroadcastReceiver() {
                 .cancel(intent.getIntExtra(Notification.EXTRA_NOTIFICATION_ID, 0))
         }
     }
+
+    companion object {
+        val RECV_ACTION = "io.fydeos.kangtester.NOTIFICATION_COMMENT"
+    }
+
 }
