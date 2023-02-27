@@ -1,7 +1,10 @@
 package io.fydeos.kangtester
 
+import android.Manifest
+import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,8 +16,12 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.loader.content.CursorLoader
+import androidx.recyclerview.widget.LinearLayoutManager
+import io.fydeos.kangtester.databinding.FragmentCameraCheckBinding
 import io.fydeos.kangtester.databinding.FragmentExternalStorageCheckBinding
 import java.io.File
 import java.io.IOException
@@ -46,6 +53,21 @@ class ExternalStorageCheckFragment : Fragment() {
         }
         binding.btnSavePicture.setOnClickListener {
             savePictureMediaStore()
+        }
+        binding.btnBrowsePictures.setOnClickListener {
+            val perm = if (Build.VERSION.SDK_INT >= 33) {
+                Manifest.permission.READ_MEDIA_IMAGES
+            } else {
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            }
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    perm
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(perm)
+            }
+            browsePictureMediaStore()
         }
     }
 
@@ -88,8 +110,35 @@ class ExternalStorageCheckFragment : Fragment() {
         }
     }
 
-    private fun browsePictureMediaStore() {
+    private lateinit var _binding: FragmentCameraCheckBinding
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        browsePictureMediaStore()
+    }
 
+    private fun browsePictureMediaStore() {
+        val galleryImageUrls = mutableListOf<Uri>()
+        val columns = arrayOf(MediaStore.Images.Media._ID)
+        val orderBy = MediaStore.Images.Media.DATE_MODIFIED
+
+        requireContext().contentResolver.query(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns,
+            null, null, "$orderBy DESC"
+        )?.use { cursor ->
+            val idColumn = cursor.getColumnIndex(MediaStore.Images.Media._ID)
+
+            while (cursor.moveToNext()) {
+                val id = cursor.getLong(idColumn)
+
+                galleryImageUrls.add(ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id))
+            }
+        }
+
+        binding.rvPictures.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rvPictures.adapter = MediaStorePictureAdaptor(galleryImageUrls) { n, e ->
+            binding.tvMessage.text = getString(R.string.image_load_error).format(n, e)
+        }
     }
 
     private fun savePictureMediaStore() {

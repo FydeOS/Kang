@@ -113,4 +113,5 @@
     <string name="document_open">Open document with Documents Provider</string>
     <string name="document_dir_open">Choose directory with Documents Provider</string>
     <string name="reqest_storage_manage_permission">Request MANAGE_EXTERNAL_STORAGE Permission</string>
+    <string name="image_load_error">Error while loading image %s: %s</string>
 </resources>
