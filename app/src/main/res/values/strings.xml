@@ -110,8 +110,12 @@
     <string name="read_storage_root">Read file from external storage root</string>
     <string name="save_picture_with_media_store_api">Save a picture with MediaStore API</string>
     <string name="browse_pictures_with_media_store_api">Browse pictures with MediaStore API</string>
-    <string name="document_open">Open document with Documents Provider</string>
-    <string name="document_dir_open">Choose directory with Documents Provider</string>
+    <string name="document_open">Open a file with Documents UI</string>
+    <string name="document_dir_open">Choose directory with Documents UI</string>
     <string name="reqest_storage_manage_permission">Request MANAGE_EXTERNAL_STORAGE Permission</string>
     <string name="image_load_error">Error while loading image %s: %s</string>
+    <string name="mime_default">text/plain</string>
+    <string name="mime_prompt">MIME Type</string>
+    <string name="file_pick_cancelled">File pick cancelled by user.</string>
+    <string name="file_info">File size: %s\nContent preview: %s</string>
 </resources>

@@ -3,7 +3,6 @@ package io.fydeos.kangtester
 import android.Manifest
 import android.content.ContentUris
 import android.content.ContentValues
-import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -13,22 +12,23 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.Fragment
 import androidx.loader.content.CursorLoader
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.fydeos.kangtester.databinding.FragmentCameraCheckBinding
 import io.fydeos.kangtester.databinding.FragmentExternalStorageCheckBinding
-import java.io.File
-import java.io.IOException
+import java.io.*
 import java.nio.charset.Charset
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class ExternalStorageCheckFragment : Fragment() {
 
@@ -68,6 +68,12 @@ class ExternalStorageCheckFragment : Fragment() {
                 requestPermissionLauncher.launch(perm)
             }
             browsePictureMediaStore()
+        }
+        binding.btnDocOpen.setOnClickListener {
+            requestOpenFileLauncher.launch(arrayOf(binding.inputMime.text.toString()))
+        }
+        binding.btnDocDirOpen.setOnClickListener {
+            requestOpenDirLauncher.launch(null)
         }
     }
 
@@ -110,11 +116,67 @@ class ExternalStorageCheckFragment : Fragment() {
         }
     }
 
-    private lateinit var _binding: FragmentCameraCheckBinding
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         browsePictureMediaStore()
+    }
+
+    private val requestOpenFileLauncher = registerForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { url ->
+        if (url != null) {
+            var fileSize = "Unknown"
+            val cursor: Cursor? = requireContext().contentResolver.query(
+                url, null, null, null, null, null
+            )
+
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
+                    if (!it.isNull(sizeIndex)) {
+                        fileSize = it.getString(sizeIndex)
+                    }
+                }
+            }
+            var content = ""
+            try {
+                requireContext().contentResolver.openInputStream(url)?.use { inputStream ->
+                    BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                        var line = reader.readLine()
+                        if (line.length > 20)
+                            line = line.substring(0, 20)
+                        content = line
+                    }
+                }
+            } catch(ex: java.lang.Exception) {
+                content = ex.toString()
+            }
+
+            binding.tvMessage.text = getString(R.string.file_info).format(fileSize, content)
+        } else {
+            binding.tvMessage.text = getString(R.string.file_pick_cancelled)
+        }
+    }
+
+    private val requestOpenDirLauncher = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
+        uri ->
+        if (uri != null) {
+            val sb = java.lang.StringBuilder()
+            val documentFile = DocumentFile.fromTreeUri(requireContext(), uri)
+            val files = documentFile!!.listFiles()
+
+            for (f in files) {
+                if (f.isDirectory) {
+                    sb.appendLine("FOLDER: " + f.name)
+                } else {
+                    sb.appendLine("FILE: " + f.name)
+                }
+            }
+            binding.tvMessage.text = sb.toString()
+        } else {
+            binding.tvMessage.text = getString(R.string.file_pick_cancelled)
+        }
     }
 
     private fun browsePictureMediaStore() {
