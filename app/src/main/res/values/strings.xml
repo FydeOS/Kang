@@ -108,8 +108,8 @@
     <string name="read_file_success_match">Successfully read from %s\nFile content: %s\nMatch: %b</string>
     <string name="write_storage_root">Write file to external storage root</string>
     <string name="read_storage_root">Read file from external storage root</string>
-    <string name="save_picture_with_media_store_api">Save a picture with MediaStore API</string>
-    <string name="browse_pictures_with_media_store_api">Browse pictures with MediaStore API</string>
+    <string name="save_picture_with_media_store_api">Save an image with MediaStore API</string>
+    <string name="browse_pictures_with_media_store_api">Browse images with MediaStore API</string>
     <string name="document_open">Open a file with Documents UI</string>
     <string name="document_dir_open">Choose directory with Documents UI</string>
     <string name="reqest_storage_manage_permission">Request MANAGE_EXTERNAL_STORAGE Permission</string>
@@ -118,4 +118,6 @@
     <string name="mime_prompt">MIME Type</string>
     <string name="file_pick_cancelled">File pick cancelled by user.</string>
     <string name="file_info">File size: %s\nContent preview: %s</string>
+    <string name="image_count">%d images found.</string>
+    <string name="no_image_permission">READ_MEDIA_IMAGES permission not granted, I will only be able to load images created by myself.</string>
 </resources>

@@ -120,6 +120,9 @@ class ExternalStorageCheckFragment : Fragment() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         browsePictureMediaStore()
+        if (!isGranted) {
+            appendLog(getString(R.string.no_image_permission))
+        }
     }
 
     private val requestOpenFileLauncher = registerForActivityResult(
@@ -149,7 +152,7 @@ class ExternalStorageCheckFragment : Fragment() {
                         content = line
                     }
                 }
-            } catch(ex: java.lang.Exception) {
+            } catch (ex: java.lang.Exception) {
                 content = ex.toString()
             }
 
@@ -159,24 +162,28 @@ class ExternalStorageCheckFragment : Fragment() {
         }
     }
 
-    private val requestOpenDirLauncher = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
-        uri ->
-        if (uri != null) {
-            val sb = java.lang.StringBuilder()
-            val documentFile = DocumentFile.fromTreeUri(requireContext(), uri)
-            val files = documentFile!!.listFiles()
+    private val requestOpenDirLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+            if (uri != null) {
+                val sb = java.lang.StringBuilder()
+                val documentFile = DocumentFile.fromTreeUri(requireContext(), uri)
+                val files = documentFile!!.listFiles()
 
-            for (f in files) {
-                if (f.isDirectory) {
-                    sb.appendLine("FOLDER: " + f.name)
-                } else {
-                    sb.appendLine("FILE: " + f.name)
+                for (f in files) {
+                    if (f.isDirectory) {
+                        sb.appendLine("FOLDER: " + f.name)
+                    } else {
+                        sb.appendLine("FILE: " + f.name)
+                    }
                 }
+                binding.tvMessage.text = sb.toString()
+            } else {
+                binding.tvMessage.text = getString(R.string.file_pick_cancelled)
             }
-            binding.tvMessage.text = sb.toString()
-        } else {
-            binding.tvMessage.text = getString(R.string.file_pick_cancelled)
         }
+
+    private fun appendLog(x: String) {
+        binding.tvMessage.text = binding.tvMessage.text.toString() + "\n" + x
     }
 
     private fun browsePictureMediaStore() {
@@ -193,14 +200,31 @@ class ExternalStorageCheckFragment : Fragment() {
             while (cursor.moveToNext()) {
                 val id = cursor.getLong(idColumn)
 
-                galleryImageUrls.add(ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id))
+                galleryImageUrls.add(
+                    ContentUris.withAppendedId(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        id
+                    )
+                )
             }
         }
 
-        binding.rvPictures.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.tvMessage.text = ""
+        binding.rvPictures.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvPictures.adapter = MediaStorePictureAdaptor(galleryImageUrls) { n, e ->
-            binding.tvMessage.text = getString(R.string.image_load_error).format(n, e)
+            appendLog(
+                getString(R.string.image_load_error).format(
+                    n,
+                    e
+                )
+            )
         }
+        appendLog(
+            getString(R.string.image_count).format(
+                binding.rvPictures.adapter!!.itemCount
+            )
+        )
     }
 
     private fun savePictureMediaStore() {
@@ -211,7 +235,8 @@ class ExternalStorageCheckFragment : Fragment() {
         val filename = rndName() + ".png"
         try {
             val uri = saveBitmap(bitmap, Bitmap.CompressFormat.PNG, "image/x-png", filename)
-            binding.tvMessage.text = getString(R.string.write_file_success).format(getRealPathFromURI(uri), "(img)")
+            binding.tvMessage.text =
+                getString(R.string.write_file_success).format(getRealPathFromURI(uri), "(img)")
         } catch (ex: IOException) {
             binding.tvMessage.text = ex.toString()
         }
