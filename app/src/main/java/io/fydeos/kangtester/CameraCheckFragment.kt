@@ -38,7 +38,7 @@ class CameraCheckFragment : Fragment() {
             if (context != null)
                 Toast.makeText(
                     requireContext(),
-                    "Permissions not granted by the user.",
+                    getString(R.string.no_permission),
                     Toast.LENGTH_SHORT
                 ).show()
             requireActivity().supportFragmentManager.popBackStack();
