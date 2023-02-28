@@ -1,8 +1,13 @@
 package io.fydeos.kangtester
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.pm.PackageManager
+import android.media.Image
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,12 +15,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import io.fydeos.kangtester.databinding.FragmentCameraCheckBinding
 import io.fydeos.kangtester.databinding.FragmentMultiTouchBinding
+import java.io.IOException
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -86,7 +94,15 @@ class CameraCheckFragment : Fragment() {
 
     private var cameraChoice = 0
 
+    private fun rndName(): String {
+        val dateFormat: DateFormat = SimpleDateFormat("yyyymmddhhmmss", Locale.US)
+        return dateFormat.format(Date())
+    }
+
+    var savedToast: Toast? = null
+
     private fun startCamera() {
+        _binding.tvMessage.text = getString(R.string.camera_loading)
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
 
         cameraProviderFuture.addListener({
@@ -119,6 +135,34 @@ class CameraCheckFragment : Fragment() {
                         return@addListener
                     }
                 }
+            val imageCapture = ImageCapture.Builder().build()
+            _binding.btnCaptureImage.setOnClickListener {
+                try {
+                    val values = ContentValues().apply {
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, rndName() + ".jpg")
+                        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                        if (Build.VERSION.SDK_INT >= 29)
+                            put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                    }
+                    val resolver = requireContext().contentResolver
+                    val opt = ImageCapture.OutputFileOptions.Builder(resolver, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values).build()
+                    imageCapture.takePicture(
+                        opt,
+                        ContextCompat.getMainExecutor(requireContext()), // Defines where the callbacks are run
+                        object : ImageCapture.OnImageSavedCallback {
+                            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                                _binding.tvMessage.text = getString(R.string.image_saved_message).format(getRealPathFromURI(requireContext(), outputFileResults.savedUri!!))
+                            }
+
+                            override fun onError(exception: ImageCaptureException) {
+                                _binding.tvMessage.text = getString(R.string.image_capture_error).format(exception.toString())
+                            }
+                        }
+                    )
+                } catch (exception: java.lang.Exception) {
+                    _binding.tvMessage.text = getString(R.string.image_capture_error).format(exception.toString())
+                }
+            }
 
             try {
                 // Unbind use cases before rebinding
@@ -126,10 +170,14 @@ class CameraCheckFragment : Fragment() {
 
                 // Bind use cases to camera
                 cameraProvider.bindToLifecycle(
-                    this, camera, preview
+                    this, camera, preview, imageCapture
                 )
 
+                _binding.tvMessage.text = getString(R.string.camera_loaded).format(
+                    cameraProvider.availableCameraInfos.size)
+
             } catch (exc: Exception) {
+                _binding.tvMessage.text = exc.toString()
                 Log.e("Camera", "Use case binding failed", exc)
             }
 

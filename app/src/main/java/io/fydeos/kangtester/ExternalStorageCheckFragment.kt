@@ -135,11 +135,6 @@ class ExternalStorageCheckFragment : Fragment() {
             getString(if (perm) R.string.got_storage_manage_permission else R.string.request_storage_manage_permission)
     }
 
-    private fun rndName(): String {
-        val dateFormat: DateFormat = SimpleDateFormat("yyyymmddhhmmss", Locale.US)
-        return dateFormat.format(Date())
-    }
-
     private var testFilePath: String? = null
     private var testFileContent: String? = null
     private fun writeFile(dir: File) {
@@ -291,7 +286,7 @@ class ExternalStorageCheckFragment : Fragment() {
         try {
             val uri = saveBitmap(bitmap, Bitmap.CompressFormat.PNG, "image/x-png", filename)
             binding.tvMessage.text =
-                getString(R.string.write_file_success).format(getRealPathFromURI(uri), "(img)")
+                getString(R.string.write_file_success).format(getRealPathFromURI(requireContext(), uri), "(img)")
         } catch (ex: IOException) {
             binding.tvMessage.text = ex.toString()
         }
@@ -332,17 +327,6 @@ class ExternalStorageCheckFragment : Fragment() {
 
             throw e
         }
-    }
-
-    private fun getRealPathFromURI(contentUri: Uri): String {
-        val proj = arrayOf(MediaStore.Images.Media.DATA)
-        val loader = CursorLoader(requireContext(), contentUri, proj, null, null, null)
-        val cursor = loader.loadInBackground()!!
-        val column_index: Int = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor.moveToFirst()
-        val result: String = cursor.getString(column_index)
-        cursor.close()
-        return result
     }
 
     override fun onResume() {

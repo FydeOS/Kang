@@ -28,8 +28,8 @@
     <string name="num_touches">Touches detected: %d</string>
     <string name="scroll_pos">Scroll position: X=%f, Y=%f</string>
     <string name="fling_det">Detected fling: X=%f, Y=%f</string>
-    <string name="take_photo">Take Photo</string>
-    <string name="start_capture">Start capture</string>
+    <string name="capture_image">Capture Image</string>
+    <string name="capture_video">Capture Video</string>
     <string name="camera_change_side">Change Side</string>
     <string name="camera_check">Camera Check</string>
     <string name="camera_missing">No available camera!</string>
@@ -124,4 +124,8 @@
     <string name="show_overlay">Overlay window</string>
     <string name="no_permission">Permission not granted by user</string>
     <string name="overlay_description">Click to change icon. Long press to close overlay.</string>
+    <string name="camera_loading">Loading camera</string>
+    <string name="camera_loaded">Camera is loaded, total camera count: %d</string>
+    <string name="image_saved_message">Image saved to: %s</string>
+    <string name="image_capture_error">Error occurred while capturing: %s</string>
 </resources>
