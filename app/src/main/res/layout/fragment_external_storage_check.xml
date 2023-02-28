@@ -102,7 +102,7 @@
                 android:id="@+id/btn_req_perm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/reqest_storage_manage_permission"
+                android:text="@string/request_storage_manage_permission"
                 android:textSize="10sp" />
 
             <Button
@@ -113,13 +113,13 @@
                 android:text="@string/write_storage_root"
                 android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/btn_read_external_storage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="@string/read_storage_root"
-            android:textSize="12sp" />
+            <Button
+                android:id="@+id/btn_read_external_storage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="@string/read_storage_root"
+                android:textSize="12sp" />
 
         <View
             android:id="@+id/divider3"

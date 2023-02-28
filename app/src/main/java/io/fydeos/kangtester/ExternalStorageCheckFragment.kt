@@ -3,6 +3,7 @@ package io.fydeos.kangtester
 import android.Manifest
 import android.content.ContentUris
 import android.content.ContentValues
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -13,6 +14,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,10 +48,11 @@ class ExternalStorageCheckFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnWriteAppSpecific.setOnClickListener {
-            writeToAppSpecificDir()
+            writeFile(requireContext().getExternalFilesDir(null)!!)
+            binding.btnReadAppSpecific.isEnabled = true
         }
         binding.btnReadAppSpecific.setOnClickListener {
-            readFromAppSpecificDir()
+            readAndCheck()
         }
         binding.btnSavePicture.setOnClickListener {
             savePictureMediaStore()
@@ -75,6 +78,61 @@ class ExternalStorageCheckFragment : Fragment() {
         binding.btnDocDirOpen.setOnClickListener {
             requestOpenDirLauncher.launch(null)
         }
+        binding.btnReqPerm.setOnClickListener {
+            val uri = Uri.parse("package:${BuildConfig.APPLICATION_ID}")
+
+            if (Build.VERSION.SDK_INT >= 30) {
+                startActivity(
+                    Intent(
+                        Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                        uri
+                    )
+                )
+            } else {
+                requestStoragePermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                )
+            }
+        }
+        binding.btnWriteExternalStorage.setOnClickListener {
+            writeFile(Environment.getExternalStorageDirectory())
+            binding.btnReadExternalStorage.isEnabled = true
+        }
+        binding.btnReadExternalStorage.setOnClickListener {
+            readAndCheck()
+        }
+    }
+
+
+    private val requestStoragePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        storageUnlimitedAccessPermission()
+    }
+
+    private fun storageUnlimitedAccessPermission() {
+        val perm =
+            if (Build.VERSION.SDK_INT >= 30) {
+                Environment.isExternalStorageManager()
+            } else {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+                        &&
+                        ContextCompat.checkSelfPermission(
+                            requireContext(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ) == PackageManager.PERMISSION_GRANTED
+            }
+
+        binding.btnWriteExternalStorage.isEnabled = perm
+        binding.btnReqPerm.isEnabled = !perm
+        binding.btnReqPerm.text =
+            getString(if (perm) R.string.got_storage_manage_permission else R.string.request_storage_manage_permission)
     }
 
     private fun rndName(): String {
@@ -82,34 +140,31 @@ class ExternalStorageCheckFragment : Fragment() {
         return dateFormat.format(Date())
     }
 
-    private var appSpecificFilePath: String? = null
-    private var appSpecificContent: String? = null
-    private fun writeToAppSpecificDir() {
-
+    private var testFilePath: String? = null
+    private var testFileContent: String? = null
+    private fun writeFile(dir: File) {
         try {
-            val f =
-                File(requireContext().getExternalFilesDir(null), rndName() + ".txt")
-            appSpecificFilePath = f.path
-            appSpecificContent = UUID.randomUUID().toString()
-            f.writeText(appSpecificContent!!, Charset.defaultCharset())
+            val f = File(dir, rndName() + ".txt")
+            testFilePath = f.path
+            testFileContent = UUID.randomUUID().toString()
+            f.writeText(testFileContent!!, Charset.defaultCharset())
             binding.tvMessage.text = getString(R.string.write_file_success).format(
-                appSpecificFilePath,
-                appSpecificContent
+                testFilePath,
+                testFileContent
             )
-            binding.btnReadAppSpecific.isEnabled = true
         } catch (ex: IOException) {
             binding.tvMessage.text = ex.toString()
         }
     }
 
-    private fun readFromAppSpecificDir() {
+    private fun readAndCheck() {
         try {
-            val f = File(appSpecificFilePath!!)
+            val f = File(testFilePath!!)
             val content = f.readText(Charset.defaultCharset())
             binding.tvMessage.text = getString(R.string.read_file_success_match).format(
-                appSpecificFilePath,
+                testFilePath,
                 content,
-                content == appSpecificContent
+                content == testFileContent
             )
         } catch (ex: IOException) {
             binding.tvMessage.text = ex.toString()
@@ -292,6 +347,7 @@ class ExternalStorageCheckFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        storageUnlimitedAccessPermission()
         binding.tvAvailability.text =
             getString(R.string.external_storage_desc).format(Environment.getExternalStorageState())
     }
