@@ -121,4 +121,7 @@
     <string name="file_info">File size: %s\nContent preview: %s</string>
     <string name="image_count">%d images found.</string>
     <string name="no_image_permission">READ_MEDIA_IMAGES permission not granted, I will only be able to load images created by myself.</string>
+    <string name="show_overlay">Overlay window</string>
+    <string name="no_permission">Permission not granted by user</string>
+    <string name="overlay_description">Click to change icon. Long press to close overlay.</string>
 </resources>

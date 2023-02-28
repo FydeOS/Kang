@@ -1,10 +1,14 @@
 package io.fydeos.kangtester
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import io.fydeos.kangtester.databinding.FragmentFirstBinding
@@ -29,6 +33,28 @@ class FirstFragment : Fragment() {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
 
+    }
+
+    private val requestOverlayLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (Settings.canDrawOverlays(requireContext())) {
+            createOverlayWindow()
+        } else {
+            if (context != null)
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.no_permission),
+                    Toast.LENGTH_SHORT
+                ).show()
+            requireActivity().supportFragmentManager.popBackStack();
+        }
+    }
+
+    private fun createOverlayWindow() {
+        Toast.makeText(requireContext(), R.string.overlay_description, Toast.LENGTH_LONG).show()
+        val intent = Intent(requireContext(), OverlayService::class.java)
+        requireContext().startForegroundService(intent)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,6 +86,17 @@ class FirstFragment : Fragment() {
         }
         binding.btnGoStorageCheck.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_externalStorageCheckFragment)
+        }
+        binding.btnShowOverlayWindow.setOnClickListener {
+            if (!Settings.canDrawOverlays(requireContext())) {
+                val intent = Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:${BuildConfig.APPLICATION_ID}")
+                )
+                requestOverlayLauncher.launch(intent)
+            } else {
+                createOverlayWindow()
+            }
         }
     }
 
