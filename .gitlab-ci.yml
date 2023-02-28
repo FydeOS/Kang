@@ -2,6 +2,7 @@ stages:
   - build
 
 build_android:
+  tags: ["docker"]
   image: fabernovel/android:api-33-v1.7.0
   stage: build
   variables:
