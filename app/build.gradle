@@ -28,10 +28,15 @@ android {
             }
         }
         release {
-            storeFile file(System.getenv('ANDROID_KEY_STOREFILE'))
-            storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
-            keyAlias System.getenv('ANDROID_KEY_ALIAS')
-            keyPassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+            try {
+
+                storeFile file(System.getenv('ANDROID_KEY_STOREFILE'))
+                storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+            }
+            catch (Exception ignored) {
+            }
         }
     }
 
