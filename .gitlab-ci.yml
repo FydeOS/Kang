@@ -1,10 +1,28 @@
 stages:
   - build
 
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.vfs.watch=false -Dorg.gradle.caching=true"
+  GRADLE_USER_HOME: .gradle/
+
+default:
+  image: fabernovel/android:api-33-v1.7.0
+  cache: &gradle-cache
+    key:
+      files:
+        - gradle/wrapper/gradle-wrapper.properties
+    paths:
+      - .gradle/caches/
+      - .gradle/notifications/
+      - .gradle/wrapper/
+    policy: pull
+
 build_android:
   tags: ["fydarjeeling-docker"]
-  image: fabernovel/android:api-33-v1.7.0
   stage: build
+  cache:
+    <<: *gradle-cache
+    policy: pull-push
   variables:
     SECURE_FILES_DOWNLOAD_PATH: './'
   script:
