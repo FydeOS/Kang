@@ -70,6 +70,7 @@ class WiFiScanCheckFragment : Fragment() {
 
     private fun showResult(manual: Boolean) {
         try {
+            val wifi = requireContext().getSystemService(WifiManager::class.java)
             val result = wifi.scanResults
             val timeFormat = SimpleDateFormat(
                 "HH:mm:ss",
@@ -97,8 +98,6 @@ class WiFiScanCheckFragment : Fragment() {
 
     }
 
-    private lateinit var wifiScanReceiver: BroadcastReceiver
-    private lateinit var wifi: WifiManager
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (!(check(Manifest.permission.ACCESS_FINE_LOCATION) && check(Manifest.permission.ACCESS_COARSE_LOCATION))) {
@@ -110,7 +109,7 @@ class WiFiScanCheckFragment : Fragment() {
             )
         }
         binding.btnScanWifi.setOnClickListener {
-            wifi = requireContext().getSystemService(WifiManager::class.java)
+            val wifi = requireContext().getSystemService(WifiManager::class.java)
             val succeeded = wifi.startScan()
             Toast.makeText(
                 requireContext(), if (succeeded) {
@@ -123,7 +122,13 @@ class WiFiScanCheckFragment : Fragment() {
         binding.btnGetScanResult.setOnClickListener {
             showResult(true)
         }
+    }
 
+    private lateinit var wifiScanReceiver: BroadcastReceiver
+    override fun onStart() {
+        super.onStart()
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         wifiScanReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 val success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false)
@@ -136,13 +141,6 @@ class WiFiScanCheckFragment : Fragment() {
                 }
             }
         }
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         requireContext().registerReceiver(wifiScanReceiver, intentFilter)
     }
 
