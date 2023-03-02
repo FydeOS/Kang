@@ -18,6 +18,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <View
+                android:id="@+id/divider8"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
             <RadioGroup
                 android:id="@+id/rg_decoder"
                 android:layout_width="match_parent"
@@ -40,6 +46,12 @@
 
             </RadioGroup>
 
+            <View
+                android:id="@+id/divider5"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
             <RadioGroup
                 android:id="@+id/rg_video_source"
                 android:layout_width="match_parent"
@@ -61,6 +73,12 @@
                     android:text="@string/video_stream" />
             </RadioGroup>
 
+            <View
+                android:id="@+id/divider6"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
             <RadioGroup
                 android:id="@+id/rg_encoding"
                 android:layout_width="match_parent"
@@ -81,6 +99,12 @@
                     android:layout_weight="1"
                     android:text="@string/codec_h265" />
             </RadioGroup>
+
+            <View
+                android:id="@+id/divider7"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
 
             <Button
                 android:id="@+id/btn_fullscreen"
