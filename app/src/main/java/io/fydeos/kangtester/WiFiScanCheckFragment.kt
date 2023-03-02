@@ -109,8 +109,8 @@ class WiFiScanCheckFragment : Fragment() {
                 )
             )
         }
-        wifi = requireContext().getSystemService(WifiManager::class.java)
         binding.btnScanWifi.setOnClickListener {
+            wifi = requireContext().getSystemService(WifiManager::class.java)
             val succeeded = wifi.startScan()
             Toast.makeText(
                 requireContext(), if (succeeded) {
@@ -137,6 +137,10 @@ class WiFiScanCheckFragment : Fragment() {
             }
         }
 
+    }
+
+    override fun onStart() {
+        super.onStart()
         val intentFilter = IntentFilter()
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         requireContext().registerReceiver(wifiScanReceiver, intentFilter)
