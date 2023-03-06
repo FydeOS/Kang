@@ -284,48 +284,11 @@ class ExternalStorageCheckFragment : Fragment() {
         )
         val filename = rndName() + ".png"
         try {
-            val uri = saveBitmap(bitmap, Bitmap.CompressFormat.PNG, "image/x-png", filename)
+            val uri = saveBitmap(requireContext(), bitmap, Bitmap.CompressFormat.PNG, "image/x-png", filename)
             binding.tvMessage.text =
                 getString(R.string.write_file_success).format(getRealPathFromURI(requireContext(), uri), "(img)")
         } catch (ex: IOException) {
             binding.tvMessage.text = ex.toString()
-        }
-    }
-
-    @Throws(IOException::class)
-    fun saveBitmap(
-        bitmap: Bitmap, format: Bitmap.CompressFormat,
-        mimeType: String, displayName: String
-    ): Uri {
-        val values = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
-            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
-            if (Build.VERSION.SDK_INT >= 29)
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-        }
-
-        val resolver = requireContext().contentResolver
-        var uri: Uri? = null
-
-        try {
-            uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-                ?: throw IOException("Failed to create new MediaStore record.")
-
-            resolver.openOutputStream(uri)?.use {
-                if (!bitmap.compress(format, 95, it))
-                    throw IOException("Failed to save bitmap.")
-            } ?: throw IOException("Failed to open output stream.")
-
-            return uri
-
-        } catch (e: IOException) {
-
-            uri?.let { orphanUri ->
-                // Don't leave an orphan entry in the MediaStore
-                resolver.delete(orphanUri, null, null)
-            }
-
-            throw e
         }
     }
 
