@@ -128,4 +128,12 @@
     <string name="camera_loaded">Camera is loaded, total camera count: %d</string>
     <string name="image_saved_message">Image saved to: %s</string>
     <string name="image_capture_error">Error occurred while capturing: %s</string>
+    <string name="rk3588_npu_check">RK3588 NPU Check</string>
+    <string name="download_npu_model">Download NPU Model</string>
+    <string name="image_source_static">Static Image</string>
+    <string name="image_source_from_camera">From Camera</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="rk_nn_url">https://fydeos-archero-assets.oss-cn-beijing.aliyuncs.com/yolov5s_rk3588.rknn</string>
+    <string name="download_progress">%dk</string>
+    <string name="model_ready">Model is ready</string>
 </resources>

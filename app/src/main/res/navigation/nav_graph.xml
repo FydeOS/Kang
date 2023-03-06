@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_externalStorageCheckFragment"
             app:destination="@id/externalStorageCheckFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_rk3588NpuCheckFragment"
+            app:destination="@id/rk3588NpuCheckFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioCheck"
@@ -85,4 +88,9 @@
         android:name="io.fydeos.kangtester.ExternalStorageCheckFragment"
         android:label="fragment_external_storage_check"
         tools:layout="@layout/fragment_external_storage_check" />
+    <fragment
+        android:id="@+id/rk3588NpuCheckFragment"
+        android:name="io.fydeos.kangtester.Rk3588NpuCheckFragment"
+        android:label="fragment_rk3588_npu_check"
+        tools:layout="@layout/fragment_rk3588_npu_check" />
 </navigation>

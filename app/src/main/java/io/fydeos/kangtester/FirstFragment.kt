@@ -98,6 +98,9 @@ class FirstFragment : Fragment() {
                 createOverlayWindow()
             }
         }
+        binding.btnGoNpuCheck.setOnClickListener {
+            findNavController().navigate(R.id.action_FirstFragment_to_rk3588NpuCheckFragment)
+        }
     }
 
     /*

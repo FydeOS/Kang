@@ -21,7 +21,7 @@ public class InferenceResult {
     OutputBuffer mOutputBuffer;
     ArrayList<Recognition> recognitions = null;
     private boolean mIsVaild = false;   //是否需要重新计算
-    PostProcess mPostProcess;
+    public PostProcess mPostProcess;
     private ObjectTracker mSSDObjectTracker;
 
     public void init(Context ctx) throws IOException {

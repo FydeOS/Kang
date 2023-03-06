@@ -126,6 +126,17 @@
                     android:layout_height="wrap_content"
                     android:text="@string/show_overlay" />
             </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <Button
+                    android:id="@+id/btn_go_npu_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rk3588_npu_check" />
+            </TableRow>
         </TableLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
