@@ -6,7 +6,7 @@ variables:
   GRADLE_USER_HOME: .gradle/
 
 default:
-  image: fabernovel/android:api-33-v1.7.0
+  image: fabernovel/android:api-33-ndk-v1.7.0
   cache: &gradle-cache
     key:
       files:
