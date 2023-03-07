@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "770927161789",
+    "project_id": "kang-app-56a76",
+    "storage_bucket": "kang-app-56a76.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770927161789:android:446e9704fc1d7a706d22d4",
+        "android_client_info": {
+          "package_name": "io.fydeos.kangtester"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770927161789-5l1ora7omhg1r02d43o81ngnq62hd7fu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfIx2xR3zAE04g5-2E_8femfpzXdt5Dn4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770927161789-5l1ora7omhg1r02d43o81ngnq62hd7fu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
