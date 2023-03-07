@@ -1,29 +1,37 @@
 package io.fydeos.kangtester
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.database.Cursor
 import android.graphics.*
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.provider.OpenableColumns
+import android.media.Image
+import android.os.*
 import android.util.Log
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.*
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.fydeos.kangtester.databinding.FragmentRk3588NpuCheckBinding
 import io.fydeos.kangtester.nn.InferenceResult
 import io.fydeos.kangtester.nn.yolo.InferenceWrapper
 import java.io.*
 import java.net.URL
+import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
+fun Bitmap.rotate(degrees: Float): Bitmap {
+    val matrix = Matrix().apply { postRotate(degrees) }
+    return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+}
 
 /**
  * A simple [Fragment] subclass.
@@ -64,15 +72,119 @@ class Rk3588NpuCheckFragment : Fragment() {
         binding.rgSource.setOnCheckedChangeListener { group, cid ->
             binding.btnLoadImage.isEnabled = cid == R.id.rb_image_static
             if (cid == R.id.rb_image_static) {
+                cameraProvider?.unbindAll()
                 val img = resources.openRawResource(R.raw.test_img_yolo).use {
                     BitmapFactory.decodeStream(it)
                 }
                 inferenceImage(img)
+            } else if (cid == R.id.rb_image_from_camera) {
+                if (ContextCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    startCamera()
+                } else {
+                    requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                }
             }
         }
         binding.btnLoadImage.setOnClickListener {
             requestOpenFileLauncher.launch(arrayOf("image/*"))
         }
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            startCamera()
+        } else {
+            if (context != null)
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.no_permission),
+                    Toast.LENGTH_SHORT
+                ).show()
+        }
+    }
+
+    private fun imageToBuffer(img: Image): ByteArray {
+        val pixels = img.height * img.width
+        val bytes = ByteArray(pixels * 4)
+        img.planes[0].buffer.get(bytes)
+        return bytes
+    }
+
+    private var cameraModelInited = false
+    private var cameraProvider: ProcessCameraProvider? = null
+    @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
+    private fun startCamera() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        val l = binding.fmImg.layoutParams as ConstraintLayout.LayoutParams
+        l.dimensionRatio = "720:1280"
+
+        binding.svCamera.visibility = View.VISIBLE
+        binding.ivRecoImage.visibility = View.INVISIBLE
+
+        cameraProviderFuture.addListener({
+            val handler = Handler(Looper.getMainLooper())
+            cameraProvider?.unbindAll()
+            cameraProvider = cameraProviderFuture.get()
+            // Preview
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(binding.svCamera.surfaceProvider)
+                }
+            val imageAnalysis = ImageAnalysis.Builder()
+                // enable the following line if RGBA output is needed.
+                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                .setTargetResolution(Size(720, 1280))
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+            cameraModelInited = false
+            imageAnalysis.setAnalyzer(executor) { imageProxy ->
+                val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+
+                val img = imageProxy.image
+                if (!cameraModelInited) {
+                    mInferenceWrapper.initModel(imageProxy.height, imageProxy.width, 3, modelPath);
+                    cameraModelInited = true
+                }
+                if (img != null) {
+                    val b = imageToBuffer(img)
+                    val output = mInferenceWrapper.run(b)
+                    handler.post {
+                        showTrackSelectResults(
+                            mInferenceWrapper.postProcess(output),
+                            imageProxy.width,
+                            imageProxy.height,
+                            rotationDegrees.toFloat()
+                        )
+                    }
+                }
+                imageProxy.close()
+            }
+
+            val hasBackCamera = cameraProvider!!.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)
+            var cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+            if (hasBackCamera) {
+                cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            }
+            try {
+                // Unbind use cases before rebinding
+
+                // Bind use cases to camera
+                cameraProvider!!.bindToLifecycle(
+                    this, cameraSelector, preview, imageAnalysis
+                )
+
+            } catch (exc: Exception) {
+                Log.e("Camera", "Use case binding failed", exc)
+            }
+
+        }, ContextCompat.getMainExecutor(requireContext()))
     }
 
     private val mInferenceWrapper = InferenceWrapper()
@@ -90,8 +202,8 @@ class Rk3588NpuCheckFragment : Fragment() {
         binding.rbImageFromCamera.isEnabled = ready
     }
 
+    private val executor: ExecutorService = Executors.newSingleThreadExecutor()
     private fun downloadModel() {
-        val executor: ExecutorService = Executors.newSingleThreadExecutor()
         val handler = Handler(Looper.getMainLooper())
 
         val urls = getString(R.string.rk_nn_url)
@@ -211,7 +323,7 @@ class Rk3588NpuCheckFragment : Fragment() {
         }
     }
 
-    private fun showTrackSelectResults(recognitions: ArrayList<InferenceResult.Recognition>, width: Int, height: Int) {
+    private fun showTrackSelectResults(recognitions: ArrayList<InferenceResult.Recognition>, width: Int, height: Int, rotate: Float = 0f) {
         val mTrackResultPaint = Paint().apply{
             color = -0xf91401
             strokeJoin = Paint.Join.ROUND
@@ -245,10 +357,14 @@ class Rk3588NpuCheckFragment : Fragment() {
 
             mTrackResultCanvas.drawRect(detection, mTrackResultPaint)
             mTrackResultCanvas.drawText(
-                rego.trackId.toString() + " - " + mInferenceResult.mPostProcess.getLabelTitle(rego.id),
+                mInferenceResult.mPostProcess.getLabelTitle(rego.id),
                 detection.left + 5, detection.bottom - 5, mTrackResultTextPaint
             )
         }
-        binding.ivRecoResult.setImageBitmap(mTrackResultBitmap)
+        var b = mTrackResultBitmap
+        if (rotate != 0f) {
+            b = b.rotate(rotate)
+        }
+        binding.ivRecoResult.setImageBitmap(b)
     }
 }
