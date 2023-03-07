@@ -2,6 +2,12 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
+    id 'org.ajoberstar.grgit' version '4.1.1'
+}
+
+ext {
+    gitVersionCode = grgit.log().size()
+    gitVersionName = grgit.log().size() + "-" + grgit.describe(tags: true, always: true)
 }
 
 android {
@@ -13,8 +19,9 @@ android {
         minSdk 28
         //noinspection ExpiredTargetSdkVersion
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+
+        versionCode gitVersionCode
+        versionName gitVersionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
