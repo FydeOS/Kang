@@ -149,8 +149,20 @@ class Rk3588NpuCheckFragment : Fragment() {
 
                 val img = imageProxy.image
                 if (!cameraModelInited) {
-                    mInferenceWrapper.initModel(imageProxy.height, imageProxy.width, 3, modelPath);
-                    cameraModelInited = true
+                    try {
+                        mInferenceWrapper.initModel(
+                            imageProxy.height,
+                            imageProxy.width,
+                            3,
+                            modelPath
+                        );
+                        cameraModelInited = true
+                    } catch (ex: java.lang.Exception) {
+                        handler.post {
+                            Toast.makeText(requireContext(), ex.message, Toast.LENGTH_LONG).show()
+                            cameraProvider!!.unbindAll()
+                        }
+                    }
                 }
                 if (img != null) {
                     val b = imageToBuffer(img)
