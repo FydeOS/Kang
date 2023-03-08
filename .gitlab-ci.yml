@@ -18,6 +18,9 @@ default:
     policy: pull
 
 build_android:
+  only:
+    refs:
+      - main
   tags: ["fydarjeeling-docker"]
   stage: build
   cache:
