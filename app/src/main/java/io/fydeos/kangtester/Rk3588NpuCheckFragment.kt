@@ -20,10 +20,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import io.fydeos.kangtester.databinding.FragmentRk3588NpuCheckBinding
 import io.fydeos.kangtester.nn.InferenceResult
+import io.fydeos.kangtester.nn.tracker.ObjectTracker
 import io.fydeos.kangtester.nn.yolo.InferenceWrapper
 import java.io.*
 import java.net.URL
-import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -116,13 +116,16 @@ class Rk3588NpuCheckFragment : Fragment() {
         return bytes
     }
 
+    private val cameraDimension = Size(720, 1280)
+
     private var cameraModelInited = false
     private var cameraProvider: ProcessCameraProvider? = null
+
     @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         val l = binding.fmImg.layoutParams as ConstraintLayout.LayoutParams
-        l.dimensionRatio = "720:1280"
+        l.dimensionRatio = "%d:%d".format(cameraDimension.width, cameraDimension.height)
 
         binding.svCamera.visibility = View.VISIBLE
         binding.ivRecoImage.visibility = View.INVISIBLE
@@ -133,6 +136,7 @@ class Rk3588NpuCheckFragment : Fragment() {
             cameraProvider = cameraProviderFuture.get()
             // Preview
             val preview = Preview.Builder()
+                .setTargetResolution(cameraDimension)
                 .build()
                 .also {
                     it.setSurfaceProvider(binding.svCamera.surfaceProvider)
@@ -140,7 +144,7 @@ class Rk3588NpuCheckFragment : Fragment() {
             val imageAnalysis = ImageAnalysis.Builder()
                 // enable the following line if RGBA output is needed.
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-                .setTargetResolution(Size(720, 1280))
+                .setTargetResolution(cameraDimension)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
             cameraModelInited = false
@@ -155,21 +159,26 @@ class Rk3588NpuCheckFragment : Fragment() {
                             imageProxy.width,
                             3,
                             modelPath
-                        );
+                        )
+                        mSSDObjectTracker =
+                            ObjectTracker(imageProxy.width, imageProxy.height, 3)
                         cameraModelInited = true
                     } catch (ex: java.lang.Exception) {
                         handler.post {
                             Toast.makeText(requireContext(), ex.message, Toast.LENGTH_LONG).show()
                             cameraProvider!!.unbindAll()
                         }
+                        return@setAnalyzer
                     }
                 }
                 if (img != null) {
                     val b = imageToBuffer(img)
                     val output = mInferenceWrapper.run(b)
+                    var result = mInferenceWrapper.postProcess(output)
+                    result = mSSDObjectTracker!!.tracker(result)
                     handler.post {
                         showTrackSelectResults(
-                            mInferenceWrapper.postProcess(output),
+                            result,
                             imageProxy.width,
                             imageProxy.height,
                             rotationDegrees.toFloat()
@@ -201,6 +210,8 @@ class Rk3588NpuCheckFragment : Fragment() {
 
     private val mInferenceWrapper = InferenceWrapper()
     private val mInferenceResult = InferenceResult()
+    private var mSSDObjectTracker: ObjectTracker? = null
+
     private fun checkModelReady() {
         var ready = false
         if (File(modelPath).exists()) {
@@ -300,9 +311,10 @@ class Rk3588NpuCheckFragment : Fragment() {
             try {
                 mInferenceWrapper.initModel(bmp.height, bmp.width, 3, modelPath);
                 val output = mInferenceWrapper.run(data)
+                var result = mInferenceWrapper.postProcess(output)
                 handler.post {
                     showTrackSelectResults(
-                        mInferenceWrapper.postProcess(output),
+                        result,
                         bmp.width,
                         bmp.height
                     )
@@ -335,8 +347,13 @@ class Rk3588NpuCheckFragment : Fragment() {
         }
     }
 
-    private fun showTrackSelectResults(recognitions: ArrayList<InferenceResult.Recognition>, width: Int, height: Int, rotate: Float = 0f) {
-        val mTrackResultPaint = Paint().apply{
+    private fun showTrackSelectResults(
+        recognitions: ArrayList<InferenceResult.Recognition>,
+        width: Int,
+        height: Int,
+        rotate: Float = 0f
+    ) {
+        val mTrackResultPaint = Paint().apply {
             color = -0xf91401
             strokeJoin = Paint.Join.ROUND
             strokeCap = Paint.Cap.ROUND
@@ -356,7 +373,6 @@ class Rk3588NpuCheckFragment : Fragment() {
             typeface = Typeface.SANS_SERIF
             isFakeBoldText = false
         }
-
 
         val mTrackResultBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val mTrackResultCanvas = Canvas(mTrackResultBitmap)

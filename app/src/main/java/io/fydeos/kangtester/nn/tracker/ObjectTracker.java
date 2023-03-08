@@ -74,10 +74,10 @@ public class ObjectTracker {
         for (int i = 0; i < track_output_num[0]; ++i) {
 
             RectF detection = new RectF(
-                            track_output_location[i * 4 + 0]/mWidth,
-                            track_output_location[i * 4 + 1]/mHeight,
-                            track_output_location[i * 4 + 2]/mWidth,
-                            track_output_location[i * 4 + 3]/mHeight);
+                            track_output_location[i * 4 + 0],
+                            track_output_location[i * 4 + 1],
+                            track_output_location[i * 4 + 2],
+                            track_output_location[i * 4 + 3]);
             float exp_score =  track_output_score[i];
             if (track_output_score[i] == -10000){
                 exp_score = 0;
