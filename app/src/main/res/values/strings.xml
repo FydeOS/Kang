@@ -125,7 +125,7 @@
     <string name="no_permission">Permission not granted by user</string>
     <string name="overlay_description">Click to change icon. Long press to close overlay.</string>
     <string name="camera_loading">Loading camera</string>
-    <string name="camera_loaded">Camera is loaded, total camera count: %d</string>
+    <string name="camera_loaded">Camera is loaded</string>
     <string name="image_saved_message">Image saved to: %s</string>
     <string name="image_capture_error">Error occurred while capturing: %s</string>
     <string name="rk3588_npu_check">RK3588 NPU Check</string>
