@@ -1,6 +1,10 @@
-# Kang Tester
+# Kang
 
-Test harness for ArcHeroNG: a small utility to check basic functionalities of Android.
+
+## What is this thing
+
+Kang is a test harness we develop for testing ArcHeroNG. In a nutshell, it's a small utility to check basic functionalities of Android.
+
 
 ## Building
 
@@ -11,6 +15,7 @@ Build with the following command:
 ```
 ./gradlew assemble
 ```
+
 
 ## Features
 * Audio
@@ -24,3 +29,8 @@ Build with the following command:
 * External Storage
 * Overlay Window
 * RK3588 NPU
+
+
+## Why Kang?
+
+Maybe we are just tired of the Avengers
